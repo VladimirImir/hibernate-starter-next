@@ -22,13 +22,13 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
 
         Company company = Company.builder()
-                .name("Amazon")
+                .name("Google")
                 .build();
         User user = User.builder()
                 .username("ivan@gmail.com")
                 .personalInfo(PersonalInfo.builder()
-                        .lastname("Petrov")
-                        .firstname("Petr")
+                        .lastname("Ivanov")
+                        .firstname("Ivan")
                         .birthDate(new Birthdate(LocalDate.of(2000, 1, 2)))
                         .build())
                 .company(company)
@@ -39,6 +39,7 @@ public class HibernateRunner {
             try (session1) {
                 Transaction transaction = session1.beginTransaction();
 
+                session1.save(company);
                 session1.save(user);
 
                 session1.getTransaction().commit();
