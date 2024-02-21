@@ -1,6 +1,7 @@
 package com.dev;
 
 import com.dev.entity.Company;
+import com.dev.entity.Profile;
 import com.dev.entity.User;
 import com.dev.util.HibernateUtil;
 import lombok.Cleanup;
@@ -26,6 +27,31 @@ import static java.util.stream.Collectors.joining;
 
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkOneToOne() {
+        try (var sessionFactory = HibernateUtil.buildSessionFactory();
+             var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var user = session.get(User.class, 12L);
+            System.out.println();
+
+            /*var user = User.builder()
+                    .username("test1@gmail.com")
+                    .build();
+            var profile = Profile.builder()
+                    .language("ru")
+                    .street("Kolasa 20")
+                    .build();
+
+            session.save(user);
+            profile.setUser(user);*/
+            //session.save(profile);
+
+            session.getTransaction().commit();
+        }
+    }
 
     @Test
     void checkOrhanRemoval() {
