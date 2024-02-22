@@ -1,5 +1,6 @@
 package com.dev;
 
+import com.dev.entity.Chat;
 import com.dev.entity.Company;
 import com.dev.entity.Profile;
 import com.dev.entity.User;
@@ -27,6 +28,26 @@ import static java.util.stream.Collectors.joining;
 
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkManyToMany() {
+        try (var sessionFactory = HibernateUtil.buildSessionFactory();
+             var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            var user = session.get(User.class, 12L);
+            user.getChats().clear();
+
+            /*var chat = Chat.builder()
+                    .name("dev")
+                    .build();
+            user.addChat(chat);
+
+            session.save(chat);*/
+
+            session.getTransaction().commit();
+        }
+    }
 
     @Test
     void checkOneToOne() {
