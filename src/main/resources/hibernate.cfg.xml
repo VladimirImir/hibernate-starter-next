@@ -12,10 +12,11 @@
         <property name="show_sql">true</property>
         <property name="format_sql">true</property>
 
-        <mapping class="com.dev.entity.User"></mapping>
-        <mapping class="com.dev.entity.Company"></mapping>
+        <mapping class="com.dev.entity.User"/>
+        <mapping class="com.dev.entity.Company"/>
         <mapping class="com.dev.entity.Profile"/>
         <mapping class="com.dev.entity.Chat"/>
+        <mapping class="com.dev.entity.UserChat"/>
         <!-- DB schema will be updated if needed -->
         <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
     </session-factory>
