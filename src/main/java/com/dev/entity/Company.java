@@ -27,19 +27,21 @@ public class Company {
     //@JoinColumn(name = "company_id")
     //@org.hibernate.annotations.OrderBy(clause = "username DESC, lastname ASC")
     //@OrderBy("personalInfo.firstname")
-    @OrderColumn(name = "id")
+    //@OrderColumn(name = "id")
+    //@SortNatural
+    @MapKey(name = "username")
     @SortNatural
-    private SortedSet<User> users = new TreeSet<>();
+    private Map<String, User> users = new TreeMap<>();
 
     @Builder.Default
     @ElementCollection
     @CollectionTable(name = "company_locale", joinColumns = @JoinColumn(name = "company_id"))
-    @Column(name = "description")
+    @MapKeyColumn(name = "lang")
     //private List<LocaleInfo> locales = new ArrayList<>();
-    private List<String> locales = new ArrayList<>();
+    private Map<String, String> locales = new HashMap<>();
 
     public void addUser(User user) {
-        users.add(user);
+        users.put(user.getUsername(), user);
         user.setCompany(this);
     }
 
