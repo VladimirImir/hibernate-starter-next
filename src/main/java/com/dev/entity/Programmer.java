@@ -5,18 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@DiscriminatorValue("programmer")
-public class Programmer extends User{
+@PrimaryKeyJoinColumn(name = "id")
+public class Programmer extends User {
 
     @Enumerated(EnumType.STRING)
     private Language language;
