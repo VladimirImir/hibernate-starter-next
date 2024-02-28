@@ -10,6 +10,7 @@ import com.dev.entity.UserChat;
 import com.dev.util.HibernateUtil;
 import lombok.Cleanup;
 import org.hibernate.Hibernate;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.Column;
@@ -22,11 +23,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.List;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.joining;
 
 class HibernateRunnerTest {
+
+    @Test
+    void checkHql() {
+        try (var sessionFactory = HibernateUtil.buildSessionFactory();
+             var session = sessionFactory.openSession()) {
+            session.beginTransaction();
+
+            // HQL / JPQL
+            // select u.* from users u where u.firstname = 'Ivan'
+            String name = "Ivan";
+            var result = session.createQuery(
+                            //"select u from User u where u.personalInfo.firstname = ?1", User.class)
+                            "select u from User u " +
+                            "left join u.company c " +
+                            "where u.personalInfo.firstname = :firstname and c.name = :companyName " +
+                            "order by u.personalInfo.lastname desc", User.class)
+                    //.setParameter(1, name)
+                    .setParameter("firstname", name)
+                    .setParameter("companyName", "Google")
+                    .list();
+
+            session.getTransaction().commit();
+        }
+    }
 
     @Test
     void checkH2() {
