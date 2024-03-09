@@ -1,39 +1,50 @@
 package com.dev.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
-import javax.persistence.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@NamedQuery(name = "findUserByName",
-        query = "select u from User u " +
-                "left join u.company c " +
-                "where u.personalInfo.firstname = :firstname and c.name = :companyName " +
-                "order by u.personalInfo.lastname desc")
+import static com.dev.util.StringUtils.SPACE;
+
+@NamedQuery(name = "findUserByName", query = "select u from User u " +
+                                             "left join u.company c " +
+                                             "where u.personalInfo.firstname = :firstname and c.name = :companyName " +
+                                             "order by u.personalInfo.lastname desc")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "username")
-@ToString(exclude = {"company", "profile", "userChats"})
+@ToString(exclude = {"company", "profile", "userChats", "payments"})
+@Builder
 @Entity
 @Table(name = "users", schema = "public")
-//@TypeDef(name = "dev", typeClass = JsonBinaryType.class)
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User implements Comparable<User>, BaseEntity<Long> {
-
-    /*@Id
-    @GeneratedValue(generator = "user_gen", strategy = GenerationType.TABLE)
-    //@SequenceGenerator(name = "user_gen", sequenceName = "users_id_seq", allocationSize = 1)
-    @TableGenerator(name = "user_gen", table = "all_sequence",
-            pkColumnName = "table_name", valueColumnName = "pk_value",
-            allocationSize = 1)
-    private Long id;*/
+//@TypeDef(name = "dmdev", typeClass = JsonBinaryType.class)
+public class User implements Comparable<User>, BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,13 +53,11 @@ public abstract class User implements Comparable<User>, BaseEntity<Long> {
     @AttributeOverride(name = "birthDate", column = @Column(name = "birth_date"))
     private PersonalInfo personalInfo;
 
-
     @Column(unique = true)
     private String username;
 
-
-    //@Type(type = "dev")
-    //private String info;
+    /*@Type(type = "dmdev")
+    private String info;*/
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -57,18 +66,27 @@ public abstract class User implements Comparable<User>, BaseEntity<Long> {
     @JoinColumn(name = "company_id") // company_id
     private Company company;
 
-    @OneToOne(mappedBy = "user",
+    @OneToOne(
+            mappedBy = "user",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     private Profile profile;
 
-    //@Builder.Default
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<UserChat> userChats = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "receiver")
+    private List<Payment> payments = new ArrayList<>();
 
     @Override
     public int compareTo(User o) {
         return username.compareTo(o.username);
+    }
+
+    public String fullName() {
+        return getPersonalInfo().getFirstname() + SPACE + getPersonalInfo().getLastname();
     }
 }

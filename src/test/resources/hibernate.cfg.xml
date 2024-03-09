@@ -19,8 +19,9 @@
         <mapping class="com.dev.entity.Profile"/>
         <mapping class="com.dev.entity.Chat"/>
         <mapping class="com.dev.entity.UserChat"/>
-        <mapping class="com.dev.entity.Programmer"/>
-        <mapping class="com.dev.entity.Manager"/>
+        <mapping class="com.dev.entity.Payment"/>
+<!--        <mapping class="com.dev.entity.Programmer"/>-->
+<!--        <mapping class="com.dev.entity.Manager"/>-->
 
     </session-factory>
 </hibernate-configuration>

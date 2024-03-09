@@ -5,10 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -24,6 +24,6 @@ public class PersonalInfo implements Serializable {
 
     //    @Convert(converter = BirthdayConverter.class)
 
-    private Birthdate birthDate;
+    private LocalDate birthDate;
 
 }

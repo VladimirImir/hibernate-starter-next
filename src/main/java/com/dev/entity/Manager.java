@@ -1,3 +1,4 @@
+/*
 package com.dev.entity;
 
 import lombok.AllArgsConstructor;
@@ -24,4 +25,4 @@ public class Manager extends User {
         super(id, personalInfo, username, role, company, profile, userChats);
         this.projectName = projectName;
     }
-}
+}*/

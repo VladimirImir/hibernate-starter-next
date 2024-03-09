@@ -3,8 +3,8 @@ package com.dev;
 import com.dev.entity.Chat;
 import com.dev.entity.Company;
 import com.dev.entity.Language;
-import com.dev.entity.Manager;
-import com.dev.entity.Programmer;
+//import com.dev.entity.Manager;
+//import com.dev.entity.Programmer;
 import com.dev.entity.User;
 import com.dev.entity.UserChat;
 import com.dev.util.HibernateUtil;
@@ -58,7 +58,7 @@ class HibernateRunnerTest {
         }
     }
 
-    @Test
+    /*@Test
     void checkH2() {
         try (var sessionFactory = HibernateUtil.buildSessionFactory();
              var session = sessionFactory.openSession()) {
@@ -92,7 +92,7 @@ class HibernateRunnerTest {
 
             session.getTransaction().commit();
         }
-    }
+    }*/
 
     @Test
     void localeInfo() {
