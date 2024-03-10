@@ -9,6 +9,7 @@ import org.hibernate.Session;
 import javax.persistence.Tuple;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,15 +23,14 @@ public class UserDao {
     public List<User> findAll(Session session) {
         /*return session.createQuery("select u from User u", User.class)
                 .list();*/
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
 
-        criteria.select(user);
+        criteria.select(user);*/
 
-        return session.createQuery(criteria)
-                .list();
+        return Collections.emptyList();
     }
 
     /**
@@ -41,17 +41,16 @@ public class UserDao {
                                    "where u.personalInfo.firstname = :firstName", User.class)
                 .setParameter("firstName", firstName)
                 .list();*/
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
 
         criteria.select(user).where(
                 cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.firstname), firstName)
-        );
+        );*/
 
-        return session.createQuery(criteria)
-                .list();
+        return Collections.emptyList();
     }
 
     /**
@@ -62,17 +61,15 @@ public class UserDao {
                 .setMaxResults(limit)
 //                .setFirstResult(offset)
                 .list();*/
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(User.class);
         var user = criteria.from(User.class);
 
         criteria.select(user).orderBy(
-                cb.asc(user.get(User_.personalInfo).get(PersonalInfo_.birthDate)));
+                cb.asc(user.get(User_.personalInfo).get(PersonalInfo_.birthDate)));*/
 
-        return session.createQuery(criteria)
-                .setMaxResults(limit)
-                .list();
+        return Collections.emptyList();
     }
 
     /**
@@ -85,17 +82,16 @@ public class UserDao {
                 .setParameter("companyName", companyName)
                 .list();*/
 
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
         var criteria = cb.createQuery(User.class);
         var company = criteria.from(Company.class);
         var users = company.join(Company_.users);
 
         criteria.select(users).where(
                 cb.equal(company.get(Company_.name), companyName)
-        );
+        );*/
 
-        return session.createQuery(criteria)
-                .list();
+        return Collections.emptyList();
     }
 
     /**
@@ -110,7 +106,7 @@ public class UserDao {
                                    "order by u.personalInfo.firstname, p.amount", Payment.class)
                 .setParameter("companyName", companyName)
                 .list();*/
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(Payment.class);
         var payment = criteria.from(Payment.class);
@@ -123,10 +119,9 @@ public class UserDao {
                 .orderBy(
                         cb.asc(user.get(User_.personalInfo).get(PersonalInfo_.firstname)),
                         cb.asc(payment.get(Payment_.amount))
-                );
+                );*/
 
-        return session.createQuery(criteria)
-                .list();
+        return Collections.emptyList();
     }
 
     /**
@@ -141,7 +136,7 @@ public class UserDao {
                 .setParameter("lastName", lastName)
                 .uniqueResult();*/
 
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(Double.class);
 
@@ -158,10 +153,9 @@ public class UserDao {
 
         criteria.select(cb.avg(payment.get(Payment_.amount))).where(
                 predicates.toArray(Predicate[]::new)
-        );
+        );*/
 
-        return session.createQuery(criteria)
-                .uniqueResult();
+        return Double.MAX_VALUE;
     }
 
     /**
@@ -174,7 +168,7 @@ public class UserDao {
                                    "group by c.name " +
                                    "order by c.name", Object[].class)
                 .list();*/
-        var cb = session.getCriteriaBuilder();
+        /*var cb = session.getCriteriaBuilder();
 
         var criteria = cb.createQuery(CompanyDto.class);
         var company = criteria.from(Company.class);
@@ -187,11 +181,9 @@ public class UserDao {
                                 cb.avg(payment.get(Payment_.amount)))
                 )
                 .groupBy(company.get(Company_.name))
-                .orderBy(cb.asc(company.get(Company_.name)));
+                .orderBy(cb.asc(company.get(Company_.name)));*/
 
-        return session.createQuery(criteria)
-                .list();
-
+        return Collections.emptyList();
     }
 
     /**
