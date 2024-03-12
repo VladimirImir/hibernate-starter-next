@@ -27,7 +27,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.dev.util.StringUtils.SPACE;
 
@@ -39,7 +41,7 @@ import static com.dev.util.StringUtils.SPACE;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "username")
-@ToString(exclude = {"company", "profile", "userChats", "payments"})
+@ToString(exclude = {"company", "userChats", "payments"})
 @Builder
 @Entity
 @Table(name = "users", schema = "public")
@@ -66,16 +68,16 @@ public class User implements Comparable<User>, BaseEntity<Long> {
     @JoinColumn(name = "company_id") // company_id
     private Company company;
 
-    @OneToOne(
+    /*@OneToOne(
             mappedBy = "user",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
-    private Profile profile;
+    private Profile profile;*/
 
     @Builder.Default
     @OneToMany(mappedBy = "user")
-    private List<UserChat> userChats = new ArrayList<>();
+    private Set<UserChat> userChats = new HashSet<>();
 
     @Builder.Default
     @OneToMany(mappedBy = "receiver")
