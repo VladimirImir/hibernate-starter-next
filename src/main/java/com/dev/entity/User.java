@@ -80,7 +80,7 @@ public class User implements Comparable<User>, BaseEntity<Long> {
 
     @Builder.Default
     //@BatchSize(size = 3)
-    @Fetch(FetchMode.SUBSELECT)
+    //@Fetch(FetchMode.SUBSELECT)
     @OneToMany(mappedBy = "receiver")
     private List<Payment> payments = new ArrayList<>();
 
