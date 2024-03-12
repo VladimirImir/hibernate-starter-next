@@ -1,13 +1,16 @@
 package com.dev.dao;
 
 import com.dev.dto.CompanyDto;
+import com.dev.dto.PaymentFilter;
 import com.dev.entity.*;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.Session;
 
 import com.querydsl.core.Tuple;
+
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -154,46 +157,6 @@ public class UserDao {
     }
 
     /**
-     * Возвращает среднюю зарплату сотрудника с указанными именем и фамилией
-     */
-    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, String firstName, String lastName) {
-        /*return session.createQuery("select avg(p.amount) from Payment p " +
-                                   "join p.receiver u " +
-                                   "where u.personalInfo.firstname = :firstName " +
-                                   "   and u.personalInfo.lastname = :lastName", Double.class)
-                .setParameter("firstName", firstName)
-                .setParameter("lastName", lastName)
-                .uniqueResult();*/
-
-        /*var cb = session.getCriteriaBuilder();
-
-        var criteria = cb.createQuery(Double.class);
-
-        var payment = criteria.from(Payment.class);
-        var user = payment.join(Payment_.receiver);
-
-        List<Predicate> predicates = new ArrayList<>();
-        if (firstName != null) {
-            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.firstname), firstName));
-        }
-        if (lastName != null) {
-            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.lastname), lastName));
-        }
-
-        criteria.select(cb.avg(payment.get(Payment_.amount))).where(
-                predicates.toArray(Predicate[]::new)
-        );*/
-
-        return new JPAQuery<Double>(session)
-                .select(payment.amount.avg())
-                .from(payment)
-                .join(payment.receiver, user)
-                .where(user.personalInfo.firstname.eq(firstName)
-                        .and(user.personalInfo.lastname.eq(lastName)))
-                .fetchOne();
-    }
-
-    /**
      * Возвращает для каждой компании: название, среднюю зарплату всех её сотрудников. Компании упорядочены по названию.
      */
     public List<Tuple> findCompanyNamesWithAvgUserPaymentsOrderedByCompanyName(Session session) {
@@ -229,12 +192,64 @@ public class UserDao {
     }
 
     /**
+     * Возвращает среднюю зарплату сотрудника с указанными именем и фамилией
+     */
+    public Double findAveragePaymentAmountByFirstAndLastNames(Session session, PaymentFilter filter) {
+        /*return session.createQuery("select avg(p.amount) from Payment p " +
+                                   "join p.receiver u " +
+                                   "where u.personalInfo.firstname = :firstName " +
+                                   "   and u.personalInfo.lastname = :lastName", Double.class)
+                .setParameter("firstName", firstName)
+                .setParameter("lastName", lastName)
+                .uniqueResult();*/
+
+        /*var cb = session.getCriteriaBuilder();
+
+        var criteria = cb.createQuery(Double.class);
+
+        var payment = criteria.from(Payment.class);
+        var user = payment.join(Payment_.receiver);
+
+        List<Predicate> predicates = new ArrayList<>();
+        if (firstName != null) {
+            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.firstname), firstName));
+        }
+        if (lastName != null) {
+            predicates.add(cb.equal(user.get(User_.personalInfo).get(PersonalInfo_.lastname), lastName));
+        }
+
+        criteria.select(cb.avg(payment.get(Payment_.amount))).where(
+                predicates.toArray(Predicate[]::new)
+        );*/
+
+        /*List<Predicate> predicates = new ArrayList<>();
+        if (filter.getFirstName() != null) {
+            predicates.add(user.personalInfo.firstname.eq(filter.getFirstName()));
+        }
+        if (filter.getLastName() != null) {
+            predicates.add(user.personalInfo.lastname.eq(filter.getLastName()));
+        }*/
+
+        var predicate = QPredicate.builder()
+                .add(filter.getFirstName(), user.personalInfo.firstname::eq)
+                .add(filter.getLastName(), user.personalInfo.lastname::eq)
+                .buildAnd();
+
+        return new JPAQuery<Double>(session)
+                .select(payment.amount.avg())
+                .from(payment)
+                .join(payment.receiver, user)
+                .where(predicate)
+                .fetchOne();
+    }
+
+    /**
      * Возвращает список: сотрудник (объект User), средний размер выплат, но только для тех сотрудников, чей средний размер выплат
      * больше среднего размера выплат всех сотрудников
      * Упорядочить по имени сотрудника
      */
     /*public List<Tuple> isItPossible(Session session) {
-        *//*return session.createQuery("select u, avg(p.amount) from User u " +
+     *//*return session.createQuery("select u, avg(p.amount) from User u " +
                                    "join u.payments p " +
                                    "group by u " +
                                    "having avg(p.amount) > (select avg(p.amount) from Payment p) " +
