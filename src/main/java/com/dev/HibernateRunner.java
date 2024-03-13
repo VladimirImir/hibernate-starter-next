@@ -14,9 +14,12 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.graph.GraphSemantic;
 import org.hibernate.graph.RootGraph;
 import org.hibernate.graph.SubGraph;
+import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,39 +28,23 @@ import java.util.Map;
 @Slf4j
 public class HibernateRunner {
 
+    @Transactional
     public static void main(String[] args) throws SQLException {
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
              Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-//            session.enableFetchProfile("withCompanyAndPayment");
+            session.doWork(connection -> System.out.println(connection.getTransactionIsolation()));
+            /*try {
+                var transaction = session.beginTransaction();
 
-            var userGraph = session.createEntityGraph(User.class);
-            userGraph.addAttributeNodes("company", "userChats");
-            var userChatSubgraph = userGraph.addSubgraph("userChats", UserChat.class);
-            userChatSubgraph.addAttributeNodes("chat");
+                var payment1 = session.find(Payment.class, 1L);
+                var payment2 = session.find(Payment.class, 2L);
 
-            Map<String, Object> properties = Map.of(
-                    //GraphSemantic.LOAD.getJpaHintName(), session.getEntityGraph("WithCompanyAndChat")
-                    GraphSemantic.LOAD.getJpaHintName(), userGraph
-            );
-            var user = session.find(User.class, 1L, properties);
-            System.out.println(user.getCompany().getName());
-            System.out.println(user.getUserChats().size());
-
-//            System.out.println(user.getPayments().size());
-//            System.out.println(user.getCompany().getName());
-
-            var users = session.createQuery(
-                            "select u from User u " +
-                            "where 1 = 1", User.class)
-                    //.setHint(GraphSemantic.LOAD.getJpaHintName(), session.getEntityGraph("WithCompanyAndChat"))
-                    .setHint(GraphSemantic.LOAD.getJpaHintName(), userGraph)
-                    .list();
-            users.forEach(it -> System.out.println(it.getUserChats().size()));
-            users.forEach(it -> System.out.println(it.getCompany().getName()));
-
-            session.getTransaction().commit();
+                session.getTransaction().commit();
+            } catch (Exception exception) {
+                session.getTransaction().rollback();
+                throw exception;
+            }*/
         }
     }
 }
