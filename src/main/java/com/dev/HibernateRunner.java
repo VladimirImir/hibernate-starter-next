@@ -18,6 +18,7 @@ import org.hibernate.jdbc.Work;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,8 +33,24 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
-             Session session = sessionFactory.openSession()) {
-            session.doWork(connection -> System.out.println(connection.getTransactionIsolation()));
+             Session session = sessionFactory.openSession();
+             Session session1 = sessionFactory.openSession()) {
+            TestDataImporter.importData(sessionFactory);
+
+            session.beginTransaction();
+            session1.beginTransaction();
+
+            var payment = session.find(Payment.class, 1L, LockModeType.OPTIMISTIC);
+            payment.setAmount(payment.getAmount() + 10);
+
+            var theSamePayment = session1.find(Payment.class, 1L, LockModeType.OPTIMISTIC);
+            theSamePayment.setAmount(theSamePayment.getAmount() + 20);
+
+            session.getTransaction().commit();
+            session1.getTransaction().commit();
+
+
+            //session.doWork(connection -> System.out.println(connection.getTransactionIsolation()));
             /*try {
                 var transaction = session.beginTransaction();
 
