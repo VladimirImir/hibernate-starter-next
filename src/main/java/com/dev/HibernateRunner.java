@@ -36,18 +36,25 @@ public class HibernateRunner {
              Session session = sessionFactory.openSession()) {
             TestDataImporter.importData(sessionFactory);
 
-            session.setDefaultReadOnly(true);
-            session.beginTransaction();
+//            session.setDefaultReadOnly(true);
+//            session.beginTransaction();
 
-//            session.createQuery("select p from Payment p", Payment.class)
+            var profile = Profile.builder()
+                    .user(session.find(User.class, 1L))
+                    .language("ru")
+                    .street("Kolasa 14")
+                    .build();
+            session.save(profile);
+
+            var payments = session.createQuery("select p from Payment p", Payment.class)
 //                    .setLockMode(LockModeType.PESSIMISTIC_FORCE_INCREMENT)
 //                    .setHint("javax.persistence.lock.timeout", 5000)
-//                    .list();
+                    .list();
 
             var payment = session.find(Payment.class, 1L);
             payment.setAmount(payment.getAmount() + 10);
 
-            session.getTransaction().commit();
+//            session.getTransaction().commit();
 
 
             //session.doWork(connection -> System.out.println(connection.getTransactionIsolation()));
