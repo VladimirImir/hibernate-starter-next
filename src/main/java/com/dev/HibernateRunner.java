@@ -39,15 +39,12 @@ public class HibernateRunner {
                      .interceptor(new GlobalInterceptor())
                      .openSession()) {
             TestDataImporter.importData(sessionFactory);
-
             session.beginTransaction();
 
             var payment = session.find(Payment.class, 1L);
             payment.setAmount(payment.getAmount() + 10);
 
-
             session.getTransaction().commit();
-
         }
     }
 }
