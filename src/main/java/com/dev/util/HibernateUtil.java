@@ -3,6 +3,7 @@ package com.dev.util;
 import com.dev.converter.BirthdateConverter;
 import com.dev.entity.Audit;
 import com.dev.entity.User;
+import com.dev.interceptor.GlobalInterceptor;
 import com.dev.listener.AuditTableListener;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.experimental.UtilityClass;
@@ -41,6 +42,7 @@ public class HibernateUtil {
         configuration.addAnnotatedClass(Audit.class);
         configuration.addAttributeConverter(new BirthdateConverter());
         configuration.registerTypeOverride(new JsonBinaryType());
+        configuration.setInterceptor(new GlobalInterceptor());
         return configuration;
     }
 }

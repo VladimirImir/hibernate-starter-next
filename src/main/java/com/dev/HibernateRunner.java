@@ -2,6 +2,7 @@ package com.dev;
 
 import com.dev.converter.BirthdateConverter;
 import com.dev.entity.*;
+import com.dev.interceptor.GlobalInterceptor;
 import com.dev.util.HibernateUtil;
 import com.dev.util.TestDataImporter;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -33,7 +34,10 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
-             Session session = sessionFactory.openSession()) {
+             Session session = sessionFactory
+                     .withOptions()
+                     .interceptor(new GlobalInterceptor())
+                     .openSession()) {
             TestDataImporter.importData(sessionFactory);
 
             session.beginTransaction();
