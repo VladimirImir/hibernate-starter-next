@@ -2,6 +2,7 @@ package com.dev.util;
 
 import com.dev.converter.BirthdateConverter;
 import com.dev.entity.Audit;
+import com.dev.entity.Revision;
 import com.dev.entity.User;
 import com.dev.interceptor.GlobalInterceptor;
 import com.dev.listener.AuditTableListener;
@@ -40,6 +41,7 @@ public class HibernateUtil {
         configuration.setPhysicalNamingStrategy(new CamelCaseToUnderscoresNamingStrategy());
         configuration.addAnnotatedClass(User.class);
         configuration.addAnnotatedClass(Audit.class);
+        configuration.addAnnotatedClass(Revision.class);
         configuration.addAttributeConverter(new BirthdateConverter());
         configuration.registerTypeOverride(new JsonBinaryType());
         configuration.setInterceptor(new GlobalInterceptor());
