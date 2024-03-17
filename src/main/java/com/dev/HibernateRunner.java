@@ -2,15 +2,16 @@ package com.dev;
 
 import com.dev.converter.BirthdateConverter;
 import com.dev.entity.*;
+import com.dev.interceptor.GlobalInterceptor;
 import com.dev.util.HibernateUtil;
 import com.dev.util.TestDataImporter;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
 import org.hibernate.graph.GraphSemantic;
 import org.hibernate.graph.RootGraph;
 import org.hibernate.graph.SubGraph;
@@ -23,6 +24,7 @@ import javax.transaction.Transactional;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -32,18 +34,16 @@ public class HibernateRunner {
     @Transactional
     public static void main(String[] args) throws SQLException {
 
-        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory();
-             Session session = sessionFactory.openSession()) {
-            TestDataImporter.importData(sessionFactory);
+        try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
+//            TestDataImporter.importData(sessionFactory);
+            try (var session = sessionFactory.openSession()) {
+                session.beginTransaction();
 
-            session.beginTransaction();
+                var payment = session.find(Payment.class, 1L);
+                payment.setAmount(payment.getAmount() + 10);
 
-            var payment = session.find(Payment.class, 1L);
-            payment.setAmount(payment.getAmount() + 10);
-
-
-            session.getTransaction().commit();
-
+                session.getTransaction().commit();
+            }
         }
     }
 }
