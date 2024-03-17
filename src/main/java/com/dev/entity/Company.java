@@ -2,7 +2,9 @@ package com.dev.entity;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.SortNatural;
+import org.hibernate.annotations.Cache;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
 
@@ -18,6 +20,7 @@ import java.util.*;
 @Entity
 //@BatchSize(size = 3)
 @Audited
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Company {
 
     @Id
