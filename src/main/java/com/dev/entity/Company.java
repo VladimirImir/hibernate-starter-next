@@ -2,7 +2,11 @@ package com.dev.entity;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.SortNatural;
+import org.hibernate.annotations.Cache;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.util.*;
@@ -15,6 +19,8 @@ import java.util.*;
 @Builder
 @Entity
 //@BatchSize(size = 3)
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Company {
 
     @Id
@@ -33,6 +39,7 @@ public class Company {
     //@SortNatural
     @MapKey(name = "username")
     @SortNatural
+    @NotAudited
     private Map<String, User> users = new TreeMap<>();
 
     @Builder.Default
@@ -40,6 +47,7 @@ public class Company {
     @CollectionTable(name = "company_locale", joinColumns = @JoinColumn(name = "company_id"))
     @MapKeyColumn(name = "lang")
     //private List<LocaleInfo> locales = new ArrayList<>();
+    @NotAudited
     private Map<String, String> locales = new HashMap<>();
 
     public void addUser(User user) {
