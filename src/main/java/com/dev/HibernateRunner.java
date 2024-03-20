@@ -23,6 +23,9 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
 import javax.transaction.Transactional;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -37,15 +40,16 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
-            try (var session = sessionFactory.openSession()) {
-                session.beginTransaction();
 
-                var paymentRepository = new PaymentRepository(sessionFactory);
+            var session = (Session) Proxy.newProxyInstance(SessionFactory.class.getClassLoader(), new Class[]{Session.class},
+                    (proxy, method, args1) -> method.invoke(sessionFactory.getCurrentSession(), args1));
+            session.beginTransaction();
 
-                paymentRepository.findById(1L).ifPresent(System.out::println);
+            var paymentRepository = new PaymentRepository(session);
 
-                session.getTransaction().commit();
-            }
+            paymentRepository.findById(1L).ifPresent(System.out::println);
+
+            session.getTransaction().commit();
         }
     }
 }
