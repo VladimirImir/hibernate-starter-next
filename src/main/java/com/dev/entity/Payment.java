@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OptimisticLockType;
 import org.hibernate.annotations.OptimisticLocking;
 import org.hibernate.envers.Audited;
+import org.hibernate.annotations.Cache;
 import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
@@ -21,6 +23,7 @@ import java.time.Instant;
 //@OptimisticLocking(type = OptimisticLockType.ALL)
 //@DynamicUpdate
 @Audited
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Payment extends AuditableEntity<Long> {
 
     @Id
