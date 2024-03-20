@@ -1,6 +1,7 @@
 package com.dev;
 
 import com.dev.converter.BirthdateConverter;
+import com.dev.dao.PaymentRepository;
 import com.dev.entity.*;
 import com.dev.interceptor.GlobalInterceptor;
 import com.dev.util.HibernateUtil;
@@ -36,39 +37,13 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
 
         try (SessionFactory sessionFactory = HibernateUtil.buildSessionFactory()) {
-//            TestDataImporter.importData(sessionFactory);
-            User user = null;
             try (var session = sessionFactory.openSession()) {
                 session.beginTransaction();
 
-                user = session.find(User.class, 1L);
-                user.getCompany().getName();
-                user.getUserChats().size();
-                var user1 = session.find(User.class, 1L);
+                var paymentRepository = new PaymentRepository(sessionFactory);
 
-                var payment = session.createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
-                        .setParameter("userId", 1L)
-                        .setCacheable(true) // обязаны указывать !!!
-                        //.setCacheRegion("queries")
-                        .getResultList();
+                paymentRepository.findById(1L).ifPresent(System.out::println);
 
-                System.out.println(sessionFactory.getStatistics().getCacheRegionStatistics("Users"));
-                session.getTransaction().commit();
-            }
-            try (var session = sessionFactory.openSession()) {
-                session.beginTransaction();
-
-                var user2 = session.find(User.class, 1L);
-                user2.getCompany().getName();
-                user2.getUserChats().size();
-
-                var payment = session.createQuery("select p from Payment p where p.receiver.id = :userId", Payment.class)
-                        .setParameter("userId", 1L)
-                        .setCacheable(true) // обязаны указывать !!!
-                        //.setCacheRegion("queries")
-                        .getResultList();
-
-                System.out.println(sessionFactory.getStatistics().getCacheRegionStatistics("Users"));
                 session.getTransaction().commit();
             }
         }
