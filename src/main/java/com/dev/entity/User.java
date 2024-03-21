@@ -8,12 +8,17 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cache;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,6 +26,12 @@ import java.util.Set;
 
 import static com.dev.util.StringUtils.SPACE;
 
+@NamedEntityGraph(
+        name = "WithCompany",
+        attributeNodes = {
+                @NamedAttributeNode("company")
+        }
+)
 @NamedEntityGraph(
         name = "WithCompanyAndChat",
         attributeNodes = {
@@ -52,15 +63,19 @@ import static com.dev.util.StringUtils.SPACE;
 @Entity
 @Table(name = "users", schema = "public")
 //@TypeDef(name = "dmdev", typeClass = JsonBinaryType.class)
+@Audited
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "Users")
 public class User implements Comparable<User>, BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Valid
     @AttributeOverride(name = "birthDate", column = @Column(name = "birth_date"))
     private PersonalInfo personalInfo;
 
+    @NotNull
     @Column(unique = true)
     private String username;
 
@@ -81,10 +96,13 @@ public class User implements Comparable<User>, BaseEntity<Long> {
     )
     private Profile profile;*/
 
+    @NotAudited
     @Builder.Default
     @OneToMany(mappedBy = "user")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     private List<UserChat> userChats = new ArrayList<>();
 
+    @NotAudited
     @Builder.Default
     //@BatchSize(size = 3)
     //@Fetch(FetchMode.SUBSELECT)
