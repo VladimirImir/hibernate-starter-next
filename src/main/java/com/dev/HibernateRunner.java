@@ -78,15 +78,15 @@ public class HibernateRunner {
                     .getDeclaredConstructor(UserRepository.class, UserReadMapper.class, UserCreateMapper.class)
                     .newInstance(userRepository, userReadMapper, userCreateMapper);
 
-            //userService.findById(1L).ifPresent(System.out::println);
+//            userService.findById(1L).ifPresent(System.out::println);
 
             UserCreateDto userCreateDto = new UserCreateDto(
                     PersonalInfo.builder()
                             .firstname("Liza")
                             .lastname("Stepanova")
-                            .birthDate(LocalDate.now())
+//                            .birthDate(LocalDate.now())
                             .build(),
-                    "liza2@gmail.com",
+                    "liza3@gmail.com",
                     Role.USER,
                     1
             );
